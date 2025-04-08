@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # 安装依赖
-RUN pip install --no-cache-dir -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+RUN pip install  -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 
 # 暴露应用运行的端口（根据你的应用配置）
 EXPOSE 8101
