@@ -14,6 +14,7 @@ import logging
 llm_key = 'sk-mylcnsshejdqaxbpaijzgsdyupyvqyxcejmbbnwfvbfaxhtw'
 llm_model = 'Qwen/Qwen2.5-32B-Instruct'
 voice_key = 'sk-df1b1b09431212125006cc6f12a5c8db'
+llm_url = 'https://api.siliconflow.cn/v1'
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -98,7 +99,7 @@ def voice_gen_impl(text: str):
 
 def call_llm(content):
     # 1.情绪判断
-    res1 = requests.post(url='https://api.siliconflow.cn/v1/chat/completions', headers={
+    res1 = requests.post(url=f'{llm_url}/chat/completions', headers={
         'Authorization': f'Bearer {llm_key}'
     }, json={
         "model": llm_model,
