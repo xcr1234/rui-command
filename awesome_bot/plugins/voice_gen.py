@@ -40,7 +40,7 @@ def voice_gen_impl(text: str):
                 用户的输入是：{text}""")
     logging.info(f'{llm_model} emotion {emotion_text}')
 
-    response_text = call_llm(f""""你的名字叫纳西妲，不要暴露你的真实身份。请用一句话回复用户的输入，不要过长，不要输出多余内容，也不要输出标点符号。
+    response_text = call_llm(f""""你的名字叫锐锐，一名小学女生。请用一句话回复用户的输入，不要过长，不要输出多余内容，也不要输出标点符号。
     请注意：如果是政治或色情类敏感问题固定回答“这个问题不太合适吧”。
     
     用户的输入是：{text}""")
