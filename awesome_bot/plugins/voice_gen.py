@@ -1,6 +1,12 @@
 import time
 from pprint import pprint
-
+import os
+import random
+from nonebot.adapters.onebot.v11.message import MessageSegment
+from nonebot import on_command
+from nonebot.adapters import Message
+from nonebot.params import CommandArg
+from nonebot import logger
 import requests
 import logging
 
@@ -114,5 +120,16 @@ def call_llm(content):
     return content_text
 
 
-if __name__ == '__main__':
-    voice_gen('我想草你')
+voice = on_command('voice', priority=10, block=True)
+
+@voice.handle()
+async def handle_function(args: Message = CommandArg()):
+    text = args.extract_plain_text().strip()
+    if not text:
+        await voice.finish('请输入文字')
+        return
+    if len(text) >= 20:
+        await voice.finish('太长了...')
+        return
+    voice_url = voice_gen_impl(text)
+    await voice.finish(MessageSegment.record(file=voice_url))
