@@ -7,7 +7,7 @@ from nonebot.log import default_format, default_filter, logger_id, logger
 
 
 def custom_filter(record):
-    return default_filter(record) and '[message.group.normal]' not in record['message']
+    return default_filter(record) and( '[message.group.normal]' not in record['message'] or '/rui' in record['message'])
 
 # 移除 NoneBot 默认的日志处理器
 logger.remove(logger_id)
