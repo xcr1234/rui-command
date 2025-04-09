@@ -37,14 +37,14 @@ def voice_gen_impl(text: str):
     emotion_text = call_llm(f"""根据用户输入的内容，判断你应该给出的情绪，情绪为（忧郁/厌恶/打招呼/慈爱/讨厌/轻快/低落/悲痛/哭腔/怒斥）之一，
                 如果没有适合的情绪，请输出“默认”，不要输出多余的内容。
                 用户的输入是：{text}""")
-    logging.info(f'emotion {emotion_text}')
+    logging.info(f'{llm_model} emotion {emotion_text}')
 
     response_text = call_llm(f""""你的名字叫纳西妲，不要暴露你的真实身份。请用一句话回复用户的输入，不要过长，不要输出多余内容，也不要输出标点符号。
     请注意：如果是政治或色情类敏感问题固定回答“这个问题不太合适吧”。
     
     用户的输入是：{text}""")
 
-    logging.info(f'response {response_text}')
+    logging.info(f'{llm_model} response {response_text}')
 
     prompt_id = prompt_dict.get(emotion_text, 'default')
 
@@ -69,7 +69,7 @@ def voice_gen_impl(text: str):
         raise Exception(f'Generate failed: {json1["message"]}')
 
     task_id = json1['data']['id']
-
+    logging.info(f'audio task id: {task_id}')
     # Step 2: 查询状态
     time.sleep(3)
     status_url = f'https://v1.vocu.ai/api/tts/generate/{task_id}'
