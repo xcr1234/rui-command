@@ -39,7 +39,7 @@ def voice_gen_impl(text: str):
                 用户的输入是：{text}""")
     logging.info(f'emotion {emotion_text}')
 
-    response_text = call_llm(f""""请用一句话回复用户的输入，不要过长，不要输出多余内容，也不要输出标点符号。
+    response_text = call_llm(f""""你的名字叫纳西妲，不要暴露你的真实身份。请用一句话回复用户的输入，不要过长，不要输出多余内容，也不要输出标点符号。
     请注意：如果是政治或色情类敏感问题固定回答“这个问题不太合适吧”。
     
     用户的输入是：{text}""")
@@ -63,7 +63,7 @@ def voice_gen_impl(text: str):
     res1 = requests.post(generate_url, headers=headers, json=payload)
     res1.raise_for_status()
     json1 = res1.json()
-    logging.info(f'Generate response: {json1}')
+    logging.debug(f'Generate response: {json1}')
 
     if json1['status'] != 200:
         raise Exception(f'Generate failed: {json1["message"]}')
@@ -77,7 +77,7 @@ def voice_gen_impl(text: str):
         res2 = requests.get(status_url, headers=headers)
         res2.raise_for_status()
         json2 = res2.json()
-        logging.info(f'Status response: {json2}')
+        logging.debug(f'Status response: {json2}')
 
         if json2['status'] != 200:
             raise Exception(f'Status check failed: {json2["message"]}')
