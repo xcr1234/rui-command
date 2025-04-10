@@ -191,15 +191,4 @@ async def handle_function(args: Message = CommandArg()):
     else:
         voice_url = voice_gen_impl(text)
 
-        if voice_url.lower().endswith('.mp3'):
-            # mp3结尾，在前面加上一段静音
-            temp_file = f'/opt/voices/tmp/{str(uuid.uuid4())}.mp3'
-            logging.info(f'temp_file {temp_file}')
-            download_url_to_file(voice_url, temp_file)
-            original_audio = AudioSegment.from_mp3(temp_file)
-            silence = AudioSegment.silent(duration=100)
-            new_audio = silence + original_audio  # 前面加静音
-            new_audio.export(temp_file, format="mp3")
-            await voice.finish(MessageSegment.record(file=temp_file))
-        else:
-            await voice.finish(MessageSegment.record(file=voice_url))
+        await voice.finish(MessageSegment.record(file=voice_url))
