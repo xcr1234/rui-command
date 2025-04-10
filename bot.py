@@ -29,7 +29,7 @@ driver.register_adapter(Adapter)
 
 # 在这里加载插件
 #nonebot.load_builtin_plugins("echo")  # 内置插件
-nonebot.load_plugin(Path("./awesome_bot"))
+nonebot.load_plugin(Path("./awesome_bot/plugins/ruirui"))
 
 if __name__ == "__main__":
     nonebot.run()
