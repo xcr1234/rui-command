@@ -1,5 +1,6 @@
 import re
 import time
+import uuid
 from pprint import pprint
 import os
 import random
@@ -12,6 +13,9 @@ import requests
 import logging
 import unicodedata
 import string
+
+from pydub import AudioSegment
+
 
 def get_fullwidth_punctuation():
     fullwidth = []
@@ -48,7 +52,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 
 
-def voice_gen_impl(text: str):
+def voice_gen_impl(text: str) -> str:
     logging.info(f'input {text}')
 
     # 声音风格映射关系
@@ -167,6 +171,16 @@ def call_llm(content: str,model=llm_model):
 
 voice = on_command('voice', priority=10, block=True)
 
+
+def download_url_to_file(url, file_path):
+    response = requests.get(url)
+    response.raise_for_status()  # 检查请求是否成功
+
+    # 将内容写入文件
+    with open(file_path, 'wb') as file:
+        file.write(response.content)
+
+
 @voice.handle()
 async def handle_function(args: Message = CommandArg()):
     text = args.extract_plain_text().strip()
@@ -176,4 +190,16 @@ async def handle_function(args: Message = CommandArg()):
         await voice.finish('太长了...')
     else:
         voice_url = voice_gen_impl(text)
-        await voice.finish(MessageSegment.record(file=voice_url))
+
+        if voice_url.lower().endswith('.mp3'):
+            # mp3结尾，在前面加上一段静音
+            temp_file = f'/opt/voices/tmp/{str(uuid.uuid4())}.mp3'
+            logging.info(f'temp_file {temp_file}')
+            download_url_to_file(voice_url, temp_file)
+            original_audio = AudioSegment.from_mp3(temp_file)
+            silence = AudioSegment.silent(duration=200)
+            new_audio = silence + original_audio  # 前面加静音
+            new_audio.export(temp_file, format="mp3")
+            await voice.finish(MessageSegment.record(file=temp_file))
+        else:
+            await voice.finish(MessageSegment.record(file=voice_url))
