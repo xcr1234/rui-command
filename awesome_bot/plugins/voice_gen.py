@@ -35,16 +35,20 @@ def voice_gen_impl(text: str):
         '怒斥': '84811fba-fba7-4567-8707-87c9bd8f5b9e'
     }
 
-    emotion_text = call_llm(f"""根据用户输入的内容，判断你应该给出的情绪，情绪为（忧郁/厌恶/打招呼/慈爱/讨厌/轻快/低落/悲痛/哭腔/怒斥）之一，
+    emotion_text = call_llm(f"""根据用户输入的内容，判断你应该给出的情绪，情绪为（{'/'.join(prompt_dict.keys())}）之一，
                 如果没有适合的情绪，请输出“默认”，不要输出多余的内容。
                 用户的输入是：{text}""")
     logging.info(f'{llm_model} emotion {emotion_text}')
+
+    time_str = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 
     response_text = call_llm(f""""你的名字叫锐锐，一名小学女生。请根据当前情绪，用一句话回复用户的输入，不要过长，不要输出多余内容，也不要输出标点符号。
     请注意：如果是政治或色情类敏感问题固定回答“这个问题不太合适吧”。
     
     你的情绪是：{emotion_text if emotion_text in prompt_dict else '默认'}
-    用户的输入是：{text}""")
+    用户的输入是：{text}
+    现在的日期时间是：{time_str}
+""")
 
     logging.info(f'{llm_model} response {response_text}')
 
@@ -98,12 +102,12 @@ def voice_gen_impl(text: str):
 
 
 
-def call_llm(content):
+def call_llm(content: str,model=llm_model):
     # 1.情绪判断
     res1 = requests.post(url=f'{llm_url}/chat/completions', headers={
         'Authorization': f'Bearer {llm_key}'
     }, json={
-        "model": llm_model,
+        "model": model,
         "messages": [
             {
                 "role": "user",
@@ -117,7 +121,6 @@ def call_llm(content):
     })
     res1.raise_for_status()
     json1 = res1.json()
-    print(json1)
     content_text = json1['choices'][0]['message']['content'].strip()
     return content_text
 
@@ -129,9 +132,8 @@ async def handle_function(args: Message = CommandArg()):
     text = args.extract_plain_text().strip()
     if not text:
         await voice.finish('请输入文字')
-        return
-    if len(text) >= 20:
+    elif len(text) >= 20:
         await voice.finish('太长了...')
-        return
-    voice_url = voice_gen_impl(text)
-    await voice.finish(MessageSegment.record(file=voice_url))
+    else:
+        voice_url = voice_gen_impl(text)
+        await voice.finish(MessageSegment.record(file=voice_url))

@@ -10,7 +10,7 @@ services:
       - .:/app       # 将本地代码挂载到容器中，方便开发时实时更新
       - /opt/voices:/opt/voices
     environment:
-      - TEST=true  # 示例环境变量，可根据需要调整
+      - TZ=Asia/Shanghai
     networks:
       - my-shared-network
 
