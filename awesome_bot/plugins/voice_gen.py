@@ -1,3 +1,4 @@
+import re
 import time
 from pprint import pprint
 import os
@@ -9,14 +10,42 @@ from nonebot.params import CommandArg
 from nonebot import logger
 import requests
 import logging
+import unicodedata
+import string
+
+def get_fullwidth_punctuation():
+    fullwidth = []
+    for c in string.punctuation:
+        code = ord(c)
+        if 0x20 <= code <= 0x7e:
+            fullwidth_code = code + 0xfee0
+            fullwidth.append(chr(fullwidth_code))
+    # 添加常见中文标点
+    extra = ['、', '。', '「', '」', '『', '』', '【', '】', '《', '》', '“', '”', '‘', '’', '·', '…', '—', '～']
+    fullwidth.extend(extra)
+    return set(fullwidth)
+
+fullwidth_punctuation = get_fullwidth_punctuation()
+
+def is_punctuation(char):
+    return (unicodedata.category(char).startswith('P') or
+            char in string.punctuation or
+            char in fullwidth_punctuation)
+
+def trim_punctuation(s):
+    end = len(s)
+    while end > 0 and is_punctuation(s[end-1]):
+        end -= 1
+    return s[:end]
 
 # 大模型调用的key
 llm_key = 'sk-mylcnsshejdqaxbpaijzgsdyupyvqyxcejmbbnwfvbfaxhtw'
-llm_model = 'Qwen/Qwen2.5-32B-Instruct'
+llm_model = 'deepseek-ai/DeepSeek-V3'
 voice_key = 'sk-df1b1b09431212125006cc6f12a5c8db'
 llm_url = 'https://api.siliconflow.cn/v1'
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 
 def voice_gen_impl(text: str):
@@ -47,7 +76,7 @@ def voice_gen_impl(text: str):
 
 
 
-    response_text = call_llm(f""""你的名字叫锐锐，一名小学女生。请根据当前情绪，用一句话回复用户的输入，不要过长，不要输出多余内容，也不要输出标点符号。
+    response_text = call_llm(f""""你的名字叫锐锐，一名小学女生。请根据当前情绪，用一句话回复用户的输入，不要过长，不要输出多余内容。
     请注意：如果是政治或色情类敏感问题固定回答“这个问题不太合适吧”。
     
     你的情绪是：{emotion_text if emotion_text in prompt_dict else '默认'}
@@ -55,7 +84,13 @@ def voice_gen_impl(text: str):
     现在的日期时间是：{time_str}
 """)
 
+
     logging.info(f'{llm_model} response {response_text}')
+
+    response_text = trim_punctuation(response_text)
+
+    logging.info(f'trim_punctuation response {response_text}')
+
 
     prompt_id = prompt_dict.get(emotion_text, 'default')
 
