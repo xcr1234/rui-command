@@ -117,7 +117,7 @@ def voice_gen_impl(text: str):
     task_id = json1['data']['id']
     logging.info(f'audio task id: {task_id}')
     # Step 2: 查询状态
-    time.sleep(3)
+    time.sleep(5)
     status_url = f'https://v1.vocu.ai/api/tts/generate/{task_id}'
     while True:
         res2 = requests.get(status_url, headers=headers)
