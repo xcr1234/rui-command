@@ -29,8 +29,7 @@ driver.register_adapter(Adapter)
 
 # 在这里加载插件
 #nonebot.load_builtin_plugins("echo")  # 内置插件
-nonebot.load_plugin(Path("./awesome_bot/plugins/foo.py"))  # 加载项目插件
-nonebot.load_plugin(Path("./awesome_bot/plugins/voice_gen.py"))
+nonebot.load_plugin(Path("./awesome_bot/plugins"))
 
 if __name__ == "__main__":
     nonebot.run()

@@ -1,20 +1,15 @@
-import re
 import time
-import uuid
-from pprint import pprint
-import os
-import random
+from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
-from nonebot import logger
 import requests
 import logging
 import unicodedata
 import string
-
-from pydub import AudioSegment
+from .mongo_store import save_voice_log
+from datetime import datetime
 
 
 def get_fullwidth_punctuation():
@@ -29,18 +24,22 @@ def get_fullwidth_punctuation():
     fullwidth.extend(extra)
     return set(fullwidth)
 
+
 fullwidth_punctuation = get_fullwidth_punctuation()
+
 
 def is_punctuation(char):
     return (unicodedata.category(char).startswith('P') or
             char in string.punctuation or
             char in fullwidth_punctuation)
 
-def trim_punctuation(s):
+
+def trim_punctuation(s: str):
     end = len(s)
-    while end > 0 and is_punctuation(s[end-1]):
+    while end > 0 and is_punctuation(s[end - 1]):
         end -= 1
     return s[:end]
+
 
 # 大模型调用的key
 llm_key = 'sk-mylcnsshejdqaxbpaijzgsdyupyvqyxcejmbbnwfvbfaxhtw'
@@ -51,8 +50,7 @@ llm_url = 'https://api.siliconflow.cn/v1'
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-
-def voice_gen_impl(text: str) -> str:
+def voice_gen_impl(text: str):
     logging.info(f'input {text}')
 
     # 声音风格映射关系
@@ -68,7 +66,7 @@ def voice_gen_impl(text: str) -> str:
         '怒斥': '84811fba-fba7-4567-8707-87c9bd8f5b9e'
     }
 
-    time_str = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
     emotion_text = call_llm(f"""根据用户输入的内容，判断你应该给出的情绪，情绪为（{'/'.join(prompt_dict.keys())}）之一，
 如果没有适合的情绪，请输出“默认”，不要输出多余的内容。
@@ -78,8 +76,6 @@ def voice_gen_impl(text: str) -> str:
 """)
     logging.info(f'{llm_model} emotion {emotion_text}')
 
-
-
     response_text = call_llm(f""""你的名字叫锐锐，一名小学女生。请根据当前情绪，用一句话回复用户的输入，不要过长，不要输出多余内容。
     请注意：如果是政治或色情类敏感问题固定回答“这个问题不太合适吧”。
     
@@ -88,13 +84,11 @@ def voice_gen_impl(text: str) -> str:
     现在的日期时间是：{time_str}
 """)
 
-
     logging.info(f'{llm_model} response {response_text}')
 
     response_text = trim_punctuation(response_text)
 
     logging.info(f'trim_punctuation response {response_text}')
-
 
     prompt_id = prompt_dict.get(emotion_text, 'default')
 
@@ -134,19 +128,16 @@ def voice_gen_impl(text: str) -> str:
 
         status = json2['data']['status']
         if status == 'generated':
-            audio = json2['data']['metadata']['contents'][0]['audio']
+            audio: str = json2['data']['metadata']['contents'][0]['audio']
             logging.info(f'Generated audio: {audio}')
-            return audio
+            return audio, response_text
         elif status == 'processing':
             time.sleep(5)
         else:
             raise Exception(f'Unexpected status: {status}')
 
 
-
-
-
-def call_llm(content: str,model=llm_model):
+def call_llm(content: str, model=llm_model) -> str:
     # 1.情绪判断
     res1 = requests.post(url=f'{llm_url}/chat/completions', headers={
         'Authorization': f'Bearer {llm_key}'
@@ -182,13 +173,22 @@ def download_url_to_file(url, file_path):
 
 
 @voice.handle()
-async def handle_function(args: Message = CommandArg()):
+async def handle_function(event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     text = args.extract_plain_text().strip()
     if not text:
         await voice.finish('请输入文字')
-    elif len(text) >= 20:
+    elif len(text) >= 25:
         await voice.finish('太长了...')
     else:
-        voice_url = voice_gen_impl(text)
-
+        voice_url, response_text = voice_gen_impl(text)
+        res_time = datetime.now()
+        if isinstance(event, GroupMessageEvent):
+            save_voice_log({
+                'input': text,
+                'res_time': res_time,
+                'group_id': event.group_id,
+                'send_user_id': event.user_id,
+                'response_text': response_text,
+                'voice_url': voice_url
+            })
         await voice.finish(MessageSegment.record(file=voice_url))
