@@ -130,7 +130,7 @@ def voice_gen_impl(text: str):
         if status == 'generated':
             audio: str = json2['data']['metadata']['contents'][0]['audio']
             logging.info(f'Generated audio: {audio}')
-            return audio, response_text
+            return audio, response_text, emotion_text
         elif status == 'processing':
             time.sleep(5)
         else:
@@ -180,7 +180,7 @@ async def handle_function(event: GroupMessageEvent, args: Message = CommandArg()
     elif len(text) >= 25:
         await voice.finish('太长了...')
     else:
-        voice_url, response_text = voice_gen_impl(text)
+        voice_url, response_text, emotion_text = voice_gen_impl(text)
         res_time = datetime.now()
         if isinstance(event, GroupMessageEvent):
             save_voice_log({
@@ -188,7 +188,8 @@ async def handle_function(event: GroupMessageEvent, args: Message = CommandArg()
                 'res_time': res_time,
                 'group_id': event.group_id,
                 'send_user_id': event.user_id,
+                'emotion_text': emotion_text,
                 'response_text': response_text,
-                'voice_url': voice_url
+                'voice_url': voice_url,
             })
         await voice.finish(MessageSegment.record(file=voice_url))
