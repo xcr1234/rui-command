@@ -8,7 +8,7 @@ MONGO_URL = f'mongodb://{quote_plus(config.mongodb_username)}:{quote_plus(config
 
 
 def save_voice_log(data: dict):
-    client = MongoClient(data)
+    client = MongoClient(MONGO_URL)
     collection = client[config.database_name]['voice_log']
     collection.insert_one(data)
 
