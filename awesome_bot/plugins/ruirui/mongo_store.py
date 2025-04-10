@@ -9,7 +9,7 @@ MONGO_URL = f'mongodb://{config.mongodb_username}:{config.mongodb_password}@{con
 
 def save_voice_log(data: dict):
     client = MongoClient(data)
-    collection = client[config.DATABASE_NAME]['voice_log']
+    collection = client[config.database_name]['voice_log']
     collection.insert_one(data)
 
     client.close()
