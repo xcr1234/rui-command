@@ -173,7 +173,7 @@ def download_url_to_file(url, file_path):
 
 
 @voice.handle()
-async def handle_function(event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+async def handle_function(event: GroupMessageEvent, args: Message = CommandArg()):
     text = args.extract_plain_text().strip()
     if not text:
         await voice.finish('请输入文字')
