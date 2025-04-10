@@ -181,11 +181,10 @@ async def handle_function(event: GroupMessageEvent, args: Message = CommandArg()
         await voice.finish('太长了...')
     else:
         voice_url, response_text, emotion_text = voice_gen_impl(text)
-        res_time = datetime.now()
         if isinstance(event, GroupMessageEvent):
             save_voice_log({
                 'input': text,
-                'res_time': res_time,
+                'res_time': datetime.utcnow(),
                 'group_id': event.group_id,
                 'send_user_id': event.user_id,
                 'emotion_text': emotion_text,
