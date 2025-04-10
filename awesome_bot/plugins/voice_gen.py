@@ -35,12 +35,17 @@ def voice_gen_impl(text: str):
         '怒斥': '84811fba-fba7-4567-8707-87c9bd8f5b9e'
     }
 
+    time_str = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+
     emotion_text = call_llm(f"""根据用户输入的内容，判断你应该给出的情绪，情绪为（{'/'.join(prompt_dict.keys())}）之一，
-                如果没有适合的情绪，请输出“默认”，不要输出多余的内容。
-                用户的输入是：{text}""")
+如果没有适合的情绪，请输出“默认”，不要输出多余的内容。
+                
+用户的输入是：{text}
+现在的日期时间是：{time_str}
+""")
     logging.info(f'{llm_model} emotion {emotion_text}')
 
-    time_str = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+
 
     response_text = call_llm(f""""你的名字叫锐锐，一名小学女生。请根据当前情绪，用一句话回复用户的输入，不要过长，不要输出多余内容，也不要输出标点符号。
     请注意：如果是政治或色情类敏感问题固定回答“这个问题不太合适吧”。
