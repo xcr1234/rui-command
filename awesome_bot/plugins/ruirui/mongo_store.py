@@ -4,7 +4,7 @@ from pymongo import MongoClient
 config = nonebot.get_driver().config
 
 
-MONGO_URL = f'mongodb://{config.mongodb_username}:{config.mongodb_password}@{config.mongodb_host}:{config.mongodb_port}/{config.database_name}?authSource={config.mongodb_auth_source}'
+MONGO_URL = f'mongodb://{config.mongodb_username}:{config.mongodb_password}@{config.mongodb_host}:{config.mongodb_port}/'
 
 
 def save_voice_log(data: dict):
