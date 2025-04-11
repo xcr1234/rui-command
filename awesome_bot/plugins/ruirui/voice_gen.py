@@ -88,7 +88,12 @@ async def handle_function(event: GroupMessageEvent, args: Message = CommandArg()
     elif len(text) >= 25:
         await voice.finish('太长了...')
     else:
-        voice_url, response_text, emotion_text = voice_gen_impl(text, event)
+        try:
+            voice_url, response_text, emotion_text = voice_gen_impl(text, event)
+        except Exception as e:
+            logging.exception(f'生成失败 {e}')
+            await voice.finish(f'生成失败: \n {str(e)}')
+            return
         if isinstance(event, GroupMessageEvent):
             save_voice_log({
                 'input': text,
