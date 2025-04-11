@@ -65,7 +65,7 @@ def query_history(group_id: int, send_user_id: int):
     client.close()
 
     # 返回res,反向
-    return reversed(list(res))
+    return list(reversed(list(res)))
 
 
 
