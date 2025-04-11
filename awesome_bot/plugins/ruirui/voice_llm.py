@@ -26,7 +26,6 @@ prompt_dict = {
 
 
 def call_llm_new(messages: list) -> str:
-    logging.info(f'{llm_model} input {messages}');
     res1 = requests.post(url=f'{llm_url}/chat/completions', headers={
         'Authorization': f'Bearer {llm_key}'
     }, json={
