@@ -1,3 +1,5 @@
+import pprint
+
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
@@ -22,6 +24,7 @@ def call_llm_new(messages: list) -> str:
     })
     res1.raise_for_status()
     json1 = res1.json()
+    pprint.pp(json1)
     content_text = json1['choices'][0]['message']['content'].strip()
     return content_text
 
