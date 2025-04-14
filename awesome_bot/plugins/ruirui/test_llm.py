@@ -20,11 +20,10 @@ def call_llm_new(messages: list) -> str:
         "stream": False,
         "response_format": {"type": "text"},
         "temperature": 0.7,
-        "max_tokens": 200
+        "max_tokens": 512
     })
     res1.raise_for_status()
     json1 = res1.json()
-    pprint.pp(json1)
     content_text = json1['choices'][0]['message']['content'].strip()
     return content_text
 
