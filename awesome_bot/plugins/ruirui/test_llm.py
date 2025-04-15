@@ -7,7 +7,7 @@ from nonebot import logger
 import requests
 
 llm_key = 'sk-mylcnsshejdqaxbpaijzgsdyupyvqyxcejmbbnwfvbfaxhtw'
-llm_model = 'Qwen/QwQ-32B'
+llm_model = 'deepseek-ai/DeepSeek-R1'
 llm_url = 'https://api.siliconflow.cn/v1'
 
 
@@ -29,7 +29,7 @@ def call_llm_new(messages: list) -> str:
 
 
 
-sorry = on_command('test', priority=10, block=True)
+sorry = on_command(cmd=('test','sorry'), priority=10, block=True)
 
 @sorry.handle()
 async def handle_function(args: Message = CommandArg()):
