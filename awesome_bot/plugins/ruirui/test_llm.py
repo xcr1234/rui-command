@@ -29,7 +29,7 @@ def call_llm_new(messages: list) -> str:
 
 
 
-sorry = on_command(cmd=('test','sorry'), priority=10, block=True)
+sorry = on_command(cmd='test', priority=10, block=True)
 
 @sorry.handle()
 async def handle_function(args: Message = CommandArg()):
