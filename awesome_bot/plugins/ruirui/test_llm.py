@@ -25,6 +25,9 @@ def call_llm_new(messages: list) -> str:
     res1.raise_for_status()
     json1 = res1.json()
     content_text = json1['choices'][0]['message']['content'].strip()
+    # 如果有reasoning_content，也logger打印出来
+    if 'reasoning_content' in json1['choices'][0]['message']:
+        logger.info(f'{llm_model} reasoning_content: {json1["choices"][0]["message"]["reasoning_content"]}')
     return content_text
 
 
