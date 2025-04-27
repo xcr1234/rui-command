@@ -1,11 +1,11 @@
 # 使用官方 Python 基础镜像
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # 设置工作目录
 WORKDIR /app
 
 # 安装 git
-RUN apt-get install -y git
+# RUN apt-get install -y git
 
 # 删除 /fortune 目录（如果存在）
 RUN rm -rf /fortune
