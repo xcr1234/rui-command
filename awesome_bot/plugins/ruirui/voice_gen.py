@@ -82,21 +82,22 @@ def download_url_to_file(url, file_path):
 
 @voice.handle()
 async def handle_function(event: GroupMessageEvent, args: Message = CommandArg()):
-    text = args.extract_plain_text().strip()
-    if not text:
-        await voice.finish('请输入文字')
-    elif len(text) >= 25:
-        await voice.finish('太长了...')
-    else:
-        voice_url, response_text, emotion_text = voice_gen_impl(text, event)
-        if isinstance(event, GroupMessageEvent):
-            save_voice_log({
-                'input': text,
-                'res_time': datetime.utcnow(),
-                'group_id': event.group_id,
-                'send_user_id': event.user_id,
-                'emotion_text': emotion_text,
-                'response_text': response_text,
-                'voice_url': voice_url,
-            })
-        await voice.finish(MessageSegment.record(file=voice_url))
+    # text = args.extract_plain_text().strip()
+    # if not text:
+    #     await voice.finish('请输入文字')
+    # elif len(text) >= 25:
+    #     await voice.finish('太长了...')
+    # else:
+    #     voice_url, response_text, emotion_text = voice_gen_impl(text, event)
+    #     if isinstance(event, GroupMessageEvent):
+    #         save_voice_log({
+    #             'input': text,
+    #             'res_time': datetime.utcnow(),
+    #             'group_id': event.group_id,
+    #             'send_user_id': event.user_id,
+    #             'emotion_text': emotion_text,
+    #             'response_text': response_text,
+    #             'voice_url': voice_url,
+    #         })
+    #     await voice.finish(MessageSegment.record(file=voice_url))
+    await voice.finish('voice指令维护中...')

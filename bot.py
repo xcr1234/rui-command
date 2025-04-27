@@ -30,6 +30,7 @@ driver.register_adapter(Adapter)
 # 在这里加载插件
 #nonebot.load_builtin_plugins("echo")  # 内置插件
 nonebot.load_plugins("awesome_bot/plugins")
+nonebot.load_plugin("nonebot_plugin_fortune")
 
 if __name__ == "__main__":
     nonebot.run()
