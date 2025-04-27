@@ -5,7 +5,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # 安装 git
-# RUN apt-get install -y git
+RUN apt-get update && apt-get install -y git
 
 # 删除 /fortune 目录（如果存在）
 RUN rm -rf /fortune
