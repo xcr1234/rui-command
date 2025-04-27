@@ -13,7 +13,7 @@ services:
       - TZ=Asia/Shanghai
     networks:
       - 1panel-network
-      - external
+      - maim_bot
 
 
 networks:
