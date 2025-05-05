@@ -1,0 +1,23 @@
+name: Auto Deploy on Master
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    name: Deploy via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Execute deployment commands
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 172.245.190.173
+          username: deployop
+          password: deploy.123456
+          script: |
+            set -e  # 出现错误立即终止
+            cd /opt/rui-command   # 替换为服务器上的项目路径
+            git pull origin master
+            docker restart rui-cmd  # 替换为你的容器名称
