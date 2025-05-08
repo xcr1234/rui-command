@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8101:8101"
+      - "127.0.0.1:8101:8101"
     volumes:
       - .:/app       # 将本地代码挂载到容器中，方便开发时实时更新
       - /opt/voices:/opt/voices
