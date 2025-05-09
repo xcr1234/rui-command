@@ -4,9 +4,9 @@ set -e
 # dump 命令执行路径，根据mongodb安装路径而定
 DUMP=/opt/mongo-tools/bin/mongodump
 # 临时备份路径
-OUT_DIR=/home/backup/mongod_bak/mongod_bak_now
+OUT_DIR=/home/backup/mongodb_bak/mongodb_bak_now
 # 压缩后的备份存放路径
-TAR_DIR=/home/backup/mongod_bak/mongod_bak_list
+TAR_DIR=/home/backup/mongodb_bak/mongodb_bak_list
 # 当前系统时间
 DATE=`date +%Y-%m-%d`
 # 数据库账号
