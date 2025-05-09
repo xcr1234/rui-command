@@ -20,7 +20,7 @@ TAR_BAK="mongod_bak_$DATE.tar.gz"
 cd $OUT_DIR
 rm -rf $OUT_DIR/*
 mkdir -p $OUT_DIR/$DATE
-$DUMP -h 127.0.0.1:27017 -u $DB_USER -p $DB_PASS -d MegBot -o $OUT_DIR/$DATE
+$DUMP -h 127.0.0.1:27017 -u $DB_USER -p $DB_PASS -d MegBot -o $OUT_DIR/$DATE --authenticationDatabase admin
 # 压缩格式为 .tar.gz 格式
 tar -zcvf $TAR_DIR/$TAR_BAK $OUT_DIR/$DATE
 # 删除 15 天前的备份文件
