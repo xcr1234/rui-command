@@ -10,9 +10,9 @@ TAR_DIR=/home/backup/mongodb_bak/mongodb_bak_list
 # 当前系统时间
 DATE=`date +%Y-%m-%d`
 # 数据库账号
-DB_USER=ruirui.admin
+DB_USER="ruirui.admin"
 # 数据库密码
-DB_PASS=ruirui.123456
+DB_PASS="ruirui.123456"
 # 代表删除7天前的备份，即只保留近 7 天的备份
 DAYS=7
 # 最终保存的数据库备份文件
