@@ -25,3 +25,6 @@ $DUMP -h 127.0.0.1:27017 -u $DB_USER -p $DB_PASS -d MegBot -o $OUT_DIR/$DATE --a
 tar -zcvf $TAR_DIR/$TAR_BAK $OUT_DIR/$DATE
 # 删除 15 天前的备份文件
 find $TAR_DIR/ -mtime +$DAYS -delete
+
+# 复制到挂载目录下面
+cp $TAR_DIR/$TAR_BAK /opt/bucket/bak
